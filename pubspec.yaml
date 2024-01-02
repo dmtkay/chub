@@ -1,0 +1,62 @@
+name: church_hub_mobile
+description: Church Hub mobile application
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+
+scripts:
+  gen: "fvm flutter pub run build_runner watch --delete-conflicting-outputs"
+  clean: "fvm flutter clean && fvm flutter pub get"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_screenutil: ^5.9.0
+  auto_route: ^7.8.4
+  hooks_riverpod: ^2.4.9
+  flutter_hooks: ^0.20.4
+  riverpod_annotation: ^2.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  auto_route_generator: ^7.3.2
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.7
+  custom_lint: ^0.5.7
+  riverpod_lint: ^2.3.7
+  flutter_gen_runner: ^5.3.2
+
+flutter_gen:
+  output: lib/gen/
+  line_length: 80
+
+  integrations:
+    flutter_svg: true
+
+  colors:
+    inputs:
+      - assets/color/colors.xml
+
+flutter:
+  uses-material-design: true
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
+
+  assets:
+    # Add assets from the images directory to the application.
+    - assets/images/
+
+  fonts:
+    - family: ProductSans
+      fonts:
+        - asset: assets/fonts/ProductSans.ttf
+
