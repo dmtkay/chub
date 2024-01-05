@@ -6,6 +6,12 @@ analyzer:
   errors:
     # Disabling invalid_annotation_target warning and warning in generates files.
     invalid_annotation_target: ignore
+  exclude:
+    - '**.freezed.dart'
+    - '**.g.dart'
+    - '**.gr.dart'
+    - '**/generated_plugin_registrant.dart'
+    - '**.gen.dart'
 
 custom_lint:
   rules:
