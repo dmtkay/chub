@@ -101,7 +101,7 @@ jobs:
         run: flutter build apk --release
       - name: Rename APK 
         run:
-          mv "./build/app/outputs/flutter-apk/release/app-release.apk" "./build/app/outputs/flutter-apk/release/${{ env.OUTPUT_NAME }}.apk"
+          mv "./build/app/outputs/flutter-apk/app-release.apk" "./build/app/outputs/flutter-apk/${{ env.OUTPUT_NAME }}.apk"
       - name: Build APPBUNDLE
         run: flutter build appbundle --release
       - name: Rename APPBUNDLE
