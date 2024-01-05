@@ -67,6 +67,14 @@ jobs:
           distribution: 'zulu'
           java-version: "12.x"  
           cache: 'gradle'
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+              ${{ runner.os }}-pub-
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.13.9"
@@ -84,6 +92,6 @@ jobs:
             lib/**/*.gen.dart
 
       - name: Start release build
-        run: flutter build apk 
+        run: flutter build apk --release
 
 
