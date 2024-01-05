@@ -97,11 +97,13 @@ jobs:
             lib/generated/
             lib/**/*.g.dart
             lib/**/*.gen.dart
-      - run: flutter build apk --release
+      - name: Build APK
+        run: flutter build apk --release
       - name: Rename APK 
         run:
           mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/flutter-apk/release/${{ env.OUTPUT_NAME }}.apk"
-      - run: flutter build apk --release
+      - name: Build APPBUNDLE
+        run: flutter build appbundle --release
       - name: Rename APPBUNDLE
         run:
           mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/appbundle/release/${{ env.OUTPUT_NAME }}.appbundle"
