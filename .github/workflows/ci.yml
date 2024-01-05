@@ -1,5 +1,8 @@
 name: Android Release
 
+env:
+  OUTPUT_NAME: ''
+
 on:
   push:
     branches: [ "main" ]
@@ -98,16 +101,20 @@ jobs:
       - name: Rename APK 
         run:
           mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.apk"
-      # - run: flutter build apk --release
-      # - name: Rename APPBUNDLE
-      #   run:
-      #     mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.appbundle"
+      - run: flutter build apk --release
+      - name: Rename APPBUNDLE
+        run:
+          mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.appbundle"
       - name: Upload release APK
         uses: actions/upload-artifact@v1
         with:
           name: ${{ env.OUTPUT_NAME }}
           path: app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.apk
-      
+      - name: Upload release APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.OUTPUT_NAME }}
+          path: app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.apk
       # - name: Create a Release in GitHub
       #   uses: ncipollo/release-action@v1
       #   with:
