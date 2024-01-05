@@ -100,11 +100,11 @@ jobs:
       - run: flutter build apk --release
       - name: Rename APK 
         run:
-          mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.apk"
+          mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/flutter-apk/release/${{ env.OUTPUT_NAME }}.apk"
       - run: flutter build apk --release
       - name: Rename APPBUNDLE
         run:
-          mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/apk/release/${{ env.OUTPUT_NAME }}.appbundle"
+          mv "./app/build/outputs/apk/release/app-release.apk" "./app/build/outputs/appbundle/release/${{ env.OUTPUT_NAME }}.appbundle"
       - name: Upload release APK
         uses: actions/upload-artifact@v1
         with:
