@@ -25,7 +25,10 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Generate resources
+        run: flutter pub run build_runner watch --delete-conflicting-outputs 
+
       - name: Start release build
-        run: flutter build apk
+        run: flutter build apk 
 
 
