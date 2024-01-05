@@ -1,7 +1,7 @@
 name: Android Release
 
-env:
-  OUTPUT_NAME: ''
+# env:
+#   OUTPUT_NAME: ''
 
 on:
   push:
@@ -53,9 +53,7 @@ jobs:
         with:
           path: version1.txt
       - name: Generate file name env var
-        run: |
-          OUTPUT_NAME = "Churchhub-release-v${{ steps.version.outputs.content }}+${{ github.run_number }}"
-          echo OUTPUT_NAME=$MESSAGE >> $GITHUB_ENV
+        run: echo "OUTPUT_NAME=churchhub-release-v${{ steps.version.outputs.content }}+${{ github.run_number }}" >> $GITHUB_ENV
       - name: Update version in YAML
         run: sed -i 's/99.99.99+99/${{ env.OUTPUT_NAME }}/g' pubspec.yaml
       - name: Download Android keystore
