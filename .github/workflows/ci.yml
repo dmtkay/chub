@@ -54,7 +54,7 @@ jobs:
           path: version1.txt
       - name: Generate file name env var
         run: |
-          APP_VERSION = "${{ steps.version.outputs.content }}+${{ github.run_number }}""
+          APP_VERSION = "${{ steps.version.outputs.content }}+${{ github.run_number }}"
           ARTIFACT_NAME= "churchhub-release-v$APP_VERSION"
           echo "VERSION=$APP_VERSION" >> $GITHUB_ENV
           echo "OUTPUT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
