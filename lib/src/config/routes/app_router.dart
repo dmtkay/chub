@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:church_hub_mobile/src/config/routes/app_router.gr.dart';
 
-/// Router configuration
+/// App Router configuration
 @AutoRouterConfig()
 class AppRouter extends $AppRouter {
   @override
