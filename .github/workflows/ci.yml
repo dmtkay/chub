@@ -25,8 +25,13 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Generate resources
-        run: flutter pub run build_runner watch --delete-conflicting-outputs 
+      - name: Flutter Build Runner
+        uses: vhanda/flutter-build-runner-action@v1
+        with:
+          output_paths: |
+            lib/generated/
+            lib/**/*.g.dart
+            lib/**/*.gen.dart
 
       - name: Start release build
         run: flutter build apk 
