@@ -1,8 +1,5 @@
 name: Android Release
 
-# env:
-#   OUTPUT_NAME: ''
-
 on:
   push:
     branches: [ "main" ]
