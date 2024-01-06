@@ -2,7 +2,7 @@ name: church_hub_mobile
 description: Church Hub mobile application
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 99.99.99+99
 
 environment:
   sdk: '>=3.1.5 <4.0.0'

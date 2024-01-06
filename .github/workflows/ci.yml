@@ -1,0 +1,134 @@
+name: Android Release
+
+# env:
+#   OUTPUT_NAME: ''
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  version:
+    name: Create version number
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fetch all history for all tags and branches
+        run: |
+          git config remote.origin.url https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
+          git fetch --unshallow --prune
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: "5.x"
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+      - name: Create version.txt with nuGetVersion
+        run: echo ${{ steps.gitversion.outputs.nuGetVersion  }} > version.txt
+      - name: Upload version.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: gitversion
+          path: version.txt
+
+  build:
+    name: Build application
+    runs-on: ubuntu-latest
+    needs: version
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get version.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: gitversion
+      - name: Create new file without newline char from version.txt
+        run: tr -d '\n' < version.txt > version1.txt
+      - name: Read version
+        id: version
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: version1.txt
+      - name: Generate file name env var
+        run: echo "VERSION=${{ steps.version.outputs.content }}+${{ github.run_number }}" >> $GITHUB_ENV
+      - name: Generate file name env var
+        run: echo "OUTPUT_NAME=churchhub-release-v${{ steps.version.outputs.content }}+${{ github.run_number }}" >> $GITHUB_ENV
+      - name: Update version in YAML
+        run: sed -i 's/99.99.99+99/${{ env.VERSION }}/g' pubspec.yaml
+      - name: Download Android keystore
+        id: android_keystore
+        uses: timheuer/base64-to-file@v1.0.3
+        with:
+          fileName: upload-keystore.jks
+          encodedString: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Create key.properties
+        run: |
+          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > android/key.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "12.x"  
+          cache: 'gradle'
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+              ${{ runner.os }}-pub-
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.13.9"
+          channel: 'stable'
+          cache: true
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Flutter Build Runner
+        uses: vhanda/flutter-build-runner-action@v1
+        with:
+          output_paths: |
+            lib/generated/
+            lib/**/*.g.dart
+            lib/**/*.gen.dart
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Rename APK 
+        run:
+          mv "./build/app/outputs/flutter-apk/app-release.apk" "./build/app/outputs/flutter-apk/${{ env.OUTPUT_NAME }}.apk"
+      - name: Build APPBUNDLE
+        run: flutter build appbundle --release
+      - name: Rename APPBUNDLE
+        run:
+          mv "./build/app/outputs/bundle/release/app-release.apk" "./build/app/outputs/bundle/release/${{ env.OUTPUT_NAME }}.aab"
+      - name: Upload release APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.OUTPUT_NAME }}
+          path: build/app/outputs/flutter-apk/release/${{ env.OUTPUT_NAME }}.apk
+      - name: Upload release APPBUNDLE
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ env.OUTPUT_NAME }}
+          path: build/app/outputs/bundle/release/${{ env.OUTPUT_NAME }}.aab
+      # - name: Create a Release in GitHub
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/app-release.aab"
+      #     token: ${{ secrets.GH_TOKEN }}
+      #     tag: ${{ steps.version.outputs.content }}
+      #     commit: ${{ github.sha }}
+      # - name: Upload app bundle
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: appbundle
+      #     path: build/app/outputs/bundle/release/app-release.aab
+
+
+
